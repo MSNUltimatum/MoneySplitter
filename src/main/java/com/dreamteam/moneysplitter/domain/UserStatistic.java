@@ -5,15 +5,14 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_table")
 @Data
-public class User {
+public class UserStatistic {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private String email;
-    private String password;
-    private String firstName;
-    private String secondName;
+    @OneToOne
+    @MapsId
+    private User user;
+    private Long totalSpend;
+    private String updatingDate;
 }
