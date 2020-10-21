@@ -45,7 +45,6 @@ public class MainPageController {
         map.put("user", value);
         map.put("spend", userStatisticRepo.findByUser(user));
         MappingJacksonValue wrapper = new MappingJacksonValue(map);
-
         wrapper.setFilters(new SimpleFilterProvider()
                 .addFilter("userFilter",
                         SimpleBeanPropertyFilter.serializeAllExcept(Set.of("id", "password")))
