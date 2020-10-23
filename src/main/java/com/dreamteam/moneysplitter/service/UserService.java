@@ -3,27 +3,32 @@ package com.dreamteam.moneysplitter.service;
 import com.dreamteam.moneysplitter.Repositories.UserRepo;
 import com.dreamteam.moneysplitter.assemblers.UserResourceAssembler;
 import com.dreamteam.moneysplitter.domain.User;
+import com.dreamteam.moneysplitter.domain.UserRoles;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    @Value("nonserializing.user.fields")
+    @Value("${nonserializing.user.fields}")
     private String nonSerializingUserFields;
 
     private final UserRepo userRepo;
     private final UserResourceAssembler userResourceAssembler;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepo userRepo,
-                       UserResourceAssembler userResourceAssembler) {
+                       UserResourceAssembler userResourceAssembler, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.userResourceAssembler = userResourceAssembler;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public MappingJacksonValue getUser(Long user_id){
@@ -42,5 +47,11 @@ public class UserService {
                 .addFilter("userFilter",
                         SimpleBeanPropertyFilter.serializeAllExcept(nonSerializingUserFields.split(","))));
         return wrapper;
+    }
+
+    public User createUser(User user){ //TODO добавлять статистику
+        user.setRoles(Sets.newHashSet(UserRoles.USER));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepo.save(user);
     }
 }

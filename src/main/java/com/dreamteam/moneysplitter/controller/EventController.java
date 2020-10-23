@@ -3,8 +3,6 @@ package com.dreamteam.moneysplitter.controller;
 import com.dreamteam.moneysplitter.Repositories.UserEventRepo;
 import com.dreamteam.moneysplitter.Repositories.UserRepo;
 import com.dreamteam.moneysplitter.domain.Event;
-import com.dreamteam.moneysplitter.domain.Views;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

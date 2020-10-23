@@ -1,6 +1,7 @@
 package com.dreamteam.moneysplitter.assemblers;
 
 import com.dreamteam.moneysplitter.controller.EventController;
+import com.dreamteam.moneysplitter.controller.UserProfileController;
 import com.dreamteam.moneysplitter.domain.User;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -20,6 +21,7 @@ public class UserResourceAssembler implements RepresentationModelAssembler<User,
     @Override
     public EntityModel<User> toModel(User entity) {
         return EntityModel.of(entity,
+                linkTo(methodOn(UserProfileController.class).myProfile(entity.getId())).withSelfRel(),
                 linkTo(methodOn(EventController.class).getMyEvents(entity.getId())).withRel("events"));
     }
 }

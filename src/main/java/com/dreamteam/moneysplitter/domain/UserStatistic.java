@@ -19,9 +19,7 @@ public class UserStatistic {
     @MapsId
     private User user;
 
-    @JsonView(Views.UserProp.class)
     private Long totalSpend;
 
-    @JsonView(Views.UserProp.class)
     private String updatingDate;
 }

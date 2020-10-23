@@ -2,6 +2,7 @@ package com.dreamteam.moneysplitter.service;
 
 import com.dreamteam.moneysplitter.Repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.assemblers.StatisticResourceAssembler;
+import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -13,6 +14,8 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -48,6 +51,9 @@ public class StatisticService {
     }
 
     public Map<String, Object> getIntervalStatistic(User user, LocalDate startDate, LocalDate endDate){
-        return null; //TODO доделать
+        Map<String, Object> map = new HashMap<>();
+        Collection<Purchase> byDayInterval = userStatisticRepo.findByDayInterval(startDate, endDate);
+        map.put("purchases", byDayInterval);
+        return map;
     }
 }
