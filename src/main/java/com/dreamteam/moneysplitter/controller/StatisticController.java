@@ -25,21 +25,21 @@ public class StatisticController {
     }
 
     @GetMapping("/{id}/getMonthStatistic")
-    public ResponseEntity<Object> getMonthStatistic(@PathVariable("id") User user){
-        MappingJacksonValue statistic = statisticService.getMonthStatistic(user);
+    public ResponseEntity<Object> getMonthStatistic(@PathVariable("id") Long user_id){
+        MappingJacksonValue statistic = statisticService.getMonthStatistic(user_id);
         return ResponseEntity.ok().body(statistic);
     }
 
     @GetMapping("/{id}/{startDate}/{endDate}")
-    public ResponseEntity<Object> getPeriodStatistic(@PathVariable("id") User user,
+    public ResponseEntity<Object> getPeriodStatistic(@PathVariable("id") Long user_id,
                                                      @PathVariable Optional<LocalDate> startDate,
                                                      @PathVariable Optional<LocalDate> endDate){
         if(startDate.isPresent() && endDate.isPresent()){
-            return ResponseEntity.ok().body(statisticService.getIntervalStatistic(user,
+            return ResponseEntity.ok().body(statisticService.getIntervalStatistic(user_id,
                                                                                   startDate.get(),
                                                                                   endDate.get()));
         } else {
-            return getMonthStatistic(user);
+            return getMonthStatistic(user_id);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.dreamteam.moneysplitter.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -21,5 +22,5 @@ public class UserEvent {
     private Event event;
 
     @Column(name = "general_contrib")
-    private Long GeneralContribution;
+    private BigDecimal GeneralContribution = BigDecimal.ONE;
 }

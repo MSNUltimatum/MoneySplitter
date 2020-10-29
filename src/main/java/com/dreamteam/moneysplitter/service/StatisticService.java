@@ -1,58 +1,67 @@
 package com.dreamteam.moneysplitter.service;
 
+import com.dreamteam.moneysplitter.Repositories.PurchaseRepo;
+import com.dreamteam.moneysplitter.Repositories.UserRepo;
 import com.dreamteam.moneysplitter.Repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.assemblers.StatisticResourceAssembler;
 import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StatisticService {
-    @Value("nonserializing.statistic.fields")
-    private String nonSerializingStatisticFields;
 
     private final StatisticResourceAssembler statisticResourceAssembler;
     private final UserStatisticRepo userStatisticRepo;
+    private final PurchaseRepo purchaseRepo;
+    private final UserRepo userRepo;
+    private final JacksonSerializer jacksonSerializer;
 
     @Autowired
-    public StatisticService(StatisticResourceAssembler statisticResourceAssembler, UserStatisticRepo userStatisticRepo) {
+    public StatisticService(StatisticResourceAssembler statisticResourceAssembler, UserStatisticRepo userStatisticRepo, PurchaseRepo purchaseRepo, UserRepo userRepo, JacksonSerializer jacksonSerializer) {
         this.statisticResourceAssembler = statisticResourceAssembler;
         this.userStatisticRepo = userStatisticRepo;
+        this.purchaseRepo = purchaseRepo;
+        this.userRepo = userRepo;
+        this.jacksonSerializer = jacksonSerializer;
     }
 
-    public MappingJacksonValue getMonthStatistic(User user){
-        EntityModel<UserStatistic> statistic = getUserEntityModel(user);
-        return getFilteringJacksonValue(statistic);
+    public MappingJacksonValue getMonthStatistic(Long user_id){
+        EntityModel<UserStatistic> statistic = getStatisticEntityModel(userRepo.findById(user_id).orElseThrow());
+        return jacksonSerializer.getFilteringJacksonValueStatistic(statistic);
     }
 
-    private EntityModel<UserStatistic> getUserEntityModel(User user) {
+    public void addToStatistic(Long user_id, BigDecimal cost){
+        UserStatistic byUser = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
+        byUser.setTotalSpend(byUser.getTotalSpend().add(cost));
+        userStatisticRepo.save(byUser);
+    }
+
+    EntityModel<UserStatistic> getStatisticEntityModel(User user) {
         UserStatistic entity = userStatisticRepo.findByUser(user);
         return statisticResourceAssembler.toModel(entity);
     }
 
-    private MappingJacksonValue getFilteringJacksonValue(EntityModel<?> userData) {
-        MappingJacksonValue wrapper = new MappingJacksonValue(userData);
-        wrapper.setFilters(new SimpleFilterProvider()
-                .addFilter("statisticFilter",
-                        SimpleBeanPropertyFilter.serializeAllExcept(nonSerializingStatisticFields.split(","))));
-        return wrapper;
+    EntityModel<UserStatistic> getStatisticEntityModel(Long user_id) {
+        UserStatistic entity = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
+        return statisticResourceAssembler.toModel(entity);
     }
 
-    public Map<String, Object> getIntervalStatistic(User user, LocalDate startDate, LocalDate endDate){
+    public Map<String, Object> getIntervalStatistic(Long user_id, LocalDate startDate, LocalDate endDate){
+        User user = userRepo.findById(user_id).orElseThrow();
         Map<String, Object> map = new HashMap<>();
-        Collection<Purchase> byDayInterval = userStatisticRepo.findByDayInterval(startDate, endDate);
+        Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
         map.put("purchases", byDayInterval);
         return map;
     }

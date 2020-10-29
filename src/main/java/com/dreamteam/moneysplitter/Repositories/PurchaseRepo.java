@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 public interface PurchaseRepo extends JpaRepository<Purchase, Long> {
-    Collection<Purchase> findAllByUser(User user);
+    List<Purchase> findAllByUser(User user);
 
-    @Query("SELECT p FROM Purchase p WHERE p.date >= ?1 AND p.date <= ?2")
-    Collection<Purchase> findAllBetweenDates(LocalDate startDate, LocalDate endDate);
+    @Query("SELECT p FROM Purchase p WHERE p.date >= ?1 AND p.date <= ?2 AND p.user = ?3")
+    Collection<Purchase> findAllBetweenDates(LocalDate startDate, LocalDate endDate, User user);
 }

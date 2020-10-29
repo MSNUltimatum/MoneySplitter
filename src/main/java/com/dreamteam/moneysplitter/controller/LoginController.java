@@ -27,9 +27,7 @@ public class LoginController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<EntityModel<User>> addUser(@RequestBody User user) throws URISyntaxException { //TODO фильтровать выдаваемый ответ
-        EntityModel<User> resource = resourceAssembler.toModel(userService.createUser(user));
-        ResponseEntity<EntityModel<User>> body = ResponseEntity.created(new URI(resource.getLink("self").get().expand().getHref())).body(resource);
-        return body;
+    public void addUser(@RequestBody User user) throws URISyntaxException {
+        userService.createUser(user);
     }
 }

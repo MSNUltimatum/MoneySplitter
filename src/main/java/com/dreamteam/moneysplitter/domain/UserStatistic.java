@@ -6,6 +6,7 @@ import lombok.Data;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -19,7 +20,7 @@ public class UserStatistic {
     @MapsId
     private User user;
 
-    private Long totalSpend;
+    private BigDecimal totalSpend = BigDecimal.ZERO;
 
     private String updatingDate;
 }
