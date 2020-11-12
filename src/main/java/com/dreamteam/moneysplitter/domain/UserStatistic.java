@@ -24,8 +24,7 @@ public class UserStatistic {
 
     private String updatingDate;
 
-    public UserStatistic(User user, BigDecimal totalSpend) {
-        this.user = user;
+    public UserStatistic(BigDecimal totalSpend, User user) {
         this.totalSpend = totalSpend;
     }
 

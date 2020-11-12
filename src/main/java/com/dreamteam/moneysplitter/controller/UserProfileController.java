@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/myProfile")
@@ -25,7 +26,7 @@ public class UserProfileController {
 
     @GetMapping("{id}")
     public ResponseEntity<Object> myProfile(@PathVariable("id") Long user_id) {
-        MappingJacksonValue profile = userService.getUserProfile(user_id);
+        Map<String, Object> profile = userService.getUserProfile(user_id);
         return ResponseEntity.ok().body(profile);
     }
 

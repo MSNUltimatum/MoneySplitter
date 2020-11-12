@@ -1,8 +1,10 @@
 package com.dreamteam.moneysplitter.controller;
 
 import com.dreamteam.moneysplitter.domain.User;
+import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import com.dreamteam.moneysplitter.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +28,7 @@ public class StatisticController {
 
     @GetMapping("/{id}/getMonthStatistic")
     public ResponseEntity<Object> getMonthStatistic(@PathVariable("id") Long user_id){
-        MappingJacksonValue statistic = statisticService.getMonthStatistic(user_id);
+        EntityModel<StatisticDTO> statistic = statisticService.getMonthStatistic(user_id);
         return ResponseEntity.ok().body(statistic);
     }
 

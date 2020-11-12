@@ -4,6 +4,7 @@ import com.dreamteam.moneysplitter.controller.EventController;
 import com.dreamteam.moneysplitter.controller.PurchaseController;
 import com.dreamteam.moneysplitter.controller.UserProfileController;
 import com.dreamteam.moneysplitter.domain.User;
+import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.hateoas.EntityModel;
@@ -18,9 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class UserResourceAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
+public class UserResourceAssembler implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
     @Override
-    public EntityModel<User> toModel(User entity) {
+    public EntityModel<UserDTO> toModel(UserDTO entity) {
         return EntityModel.of(entity,
                 linkTo(methodOn(UserProfileController.class).myProfile(entity.getId())).withSelfRel(),
                 linkTo(methodOn(EventController.class).getMyEvents(entity.getId())).withRel("events"),

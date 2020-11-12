@@ -6,6 +6,8 @@ import com.dreamteam.moneysplitter.assemblers.UserResourceAssembler;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserRoles;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
+import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
+import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -26,33 +28,34 @@ public class UserService {
     private final UserStatisticRepo statisticRepo;
     private final UserResourceAssembler userResourceAssembler;
     private final PasswordEncoder passwordEncoder;
-    private final JacksonSerializer jacksonSerializer;
 
     @Autowired
     public UserService(UserRepo userRepo,
                        StatisticService statisticService, UserStatisticRepo statisticRepo,
                        UserResourceAssembler userResourceAssembler,
-                       PasswordEncoder passwordEncoder, JacksonSerializer jacksonSerializer) {
+                       PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.statisticService = statisticService;
         this.statisticRepo = statisticRepo;
         this.userResourceAssembler = userResourceAssembler;
         this.passwordEncoder = passwordEncoder;
-        this.jacksonSerializer = jacksonSerializer;
     }
 
-    public MappingJacksonValue getUserProfile(Long user_id){
-        EntityModel<User> user = getUserEntityModel(user_id);
-        EntityModel<UserStatistic> statisticEntityModel = statisticService.getStatisticEntityModel(user_id);
+    public Map<String, Object> getUserProfile(Long user_id){
+        EntityModel<UserDTO> user = getUserEntityModel(user_id);
+        EntityModel<StatisticDTO> statisticEntityModel = statisticService.getStatisticEntityModel(user_id);
         Map<String, Object> profile = new HashMap<>();
         profile.put("user", user);
         profile.put("statistic", statisticEntityModel);
-        return jacksonSerializer.getFilteringJacksonValueUserStatistic(profile);
+        return profile;
     }
 
-    private EntityModel<User> getUserEntityModel(Long user_id) {
+    private EntityModel<UserDTO> getUserEntityModel(Long user_id) {
         User entity = userRepo.findById(user_id).orElseThrow();
-        return userResourceAssembler.toModel(entity);
+        return userResourceAssembler.toModel(new UserDTO(entity.getId(),
+                entity.getFirstName(),
+                entity.getSecondName(),
+                entity.getEmail()));
     }
 
     public User createUser(User user){

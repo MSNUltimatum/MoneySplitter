@@ -7,17 +7,15 @@ import com.dreamteam.moneysplitter.assemblers.StatisticResourceAssembler;
 import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
+import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Links;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class StatisticService {
@@ -26,20 +24,20 @@ public class StatisticService {
     private final UserStatisticRepo userStatisticRepo;
     private final PurchaseRepo purchaseRepo;
     private final UserRepo userRepo;
-    private final JacksonSerializer jacksonSerializer;
 
     @Autowired
-    public StatisticService(StatisticResourceAssembler statisticResourceAssembler, UserStatisticRepo userStatisticRepo, PurchaseRepo purchaseRepo, UserRepo userRepo, JacksonSerializer jacksonSerializer) {
+    public StatisticService(StatisticResourceAssembler statisticResourceAssembler,
+                            UserStatisticRepo userStatisticRepo,
+                            PurchaseRepo purchaseRepo,
+                            UserRepo userRepo) {
         this.statisticResourceAssembler = statisticResourceAssembler;
         this.userStatisticRepo = userStatisticRepo;
         this.purchaseRepo = purchaseRepo;
         this.userRepo = userRepo;
-        this.jacksonSerializer = jacksonSerializer;
     }
 
-    public MappingJacksonValue getMonthStatistic(Long user_id){
-        EntityModel<UserStatistic> statistic = getStatisticEntityModel(userRepo.findById(user_id).orElseThrow());
-        return jacksonSerializer.getFilteringJacksonValueStatistic(statistic);
+    public EntityModel<StatisticDTO> getMonthStatistic(Long user_id){
+        return getStatisticEntityModel(userRepo.findById(user_id).orElseThrow());
     }
 
     public void addToStatistic(Long user_id, BigDecimal cost){
@@ -48,23 +46,25 @@ public class StatisticService {
         userStatisticRepo.save(byUser);
     }
 
-    public MappingJacksonValue getIntervalStatistic(Long user_id, String startDate, String endDate){
+    public EntityModel<StatisticDTO> getIntervalStatistic(Long user_id, String startDate, String endDate){
         User user = userRepo.findById(user_id).orElseThrow();
         Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
         BigDecimal totalSpendByInterval = byDayInterval.stream()
                 .map(Purchase::getPurchaseCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        EntityModel<UserStatistic> userStatisticEntityModel = statisticResourceAssembler.toModel(new UserStatistic(user, totalSpendByInterval));
-        return jacksonSerializer.getFilteringJacksonValueStatistic(userStatisticEntityModel);
+        Links links = statisticResourceAssembler.toModel(new UserStatistic(totalSpendByInterval, user)).getLinks();
+        return EntityModel.of(new StatisticDTO(totalSpendByInterval), links);
     }
 
-    EntityModel<UserStatistic> getStatisticEntityModel(User user) {
+    EntityModel<StatisticDTO> getStatisticEntityModel(User user) {
         UserStatistic entity = userStatisticRepo.findByUser(user);
-        return statisticResourceAssembler.toModel(entity);
+        Links links = statisticResourceAssembler.toModel(entity).getLinks();
+        return EntityModel.of(new StatisticDTO(entity.getTotalSpend()), links);
     }
 
-    EntityModel<UserStatistic> getStatisticEntityModel(Long user_id) {
+    EntityModel<StatisticDTO> getStatisticEntityModel(Long user_id) {
         UserStatistic entity = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
-        return statisticResourceAssembler.toModel(entity);
+        Links links = statisticResourceAssembler.toModel(entity).getLinks();
+        return EntityModel.of(new StatisticDTO(entity.getTotalSpend()), links);
     }
 }

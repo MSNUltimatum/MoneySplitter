@@ -6,9 +6,11 @@ import com.dreamteam.moneysplitter.assemblers.PurchaseResourceAssembler;
 import com.dreamteam.moneysplitter.controller.PurchaseController;
 import com.dreamteam.moneysplitter.controller.UserProfileController;
 import com.dreamteam.moneysplitter.domain.Purchase;
+import com.dreamteam.moneysplitter.domain.dto.PurchaseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Links;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
@@ -24,42 +26,41 @@ public class PurchaseService {
 
     private final PurchaseRepo purchaseRepo;
     private final UserRepo userRepo;
-    private final JacksonSerializer jacksonSerializer;
     private final PurchaseResourceAssembler resourceAssembler;
     private final StatisticService statisticService;
 
     @Autowired
     public PurchaseService(PurchaseRepo purchaseRepo,
                            UserRepo userRepo,
-                           JacksonSerializer jacksonSerializer,
                            PurchaseResourceAssembler resourceAssembler,
                            StatisticService statisticService) {
         this.purchaseRepo = purchaseRepo;
         this.userRepo = userRepo;
-        this.jacksonSerializer = jacksonSerializer;
         this.resourceAssembler = resourceAssembler;
         this.statisticService = statisticService;
     }
 
-    public MappingJacksonValue addOwnUserPurchase(Long user_id, Purchase purchase){
+    public EntityModel<PurchaseDTO> addOwnUserPurchase(Long user_id, Purchase purchase){
         purchase.setUser(userRepo.findById(user_id).orElseThrow());
         purchase.setDate(LocalDate.now().toString());
         statisticService.addToStatistic(user_id, purchase.getPurchaseCost());
         Purchase save = purchaseRepo.save(purchase);
-        EntityModel<Purchase> purchaseEntityModel = resourceAssembler.toModel(save);
-        return jacksonSerializer.getFilteringJacksonValuePurchase(getCollectionModel(List.of(purchaseEntityModel), user_id));
+        Links links = resourceAssembler.toModel(save).getLinks();
+        return EntityModel.of(new PurchaseDTO(purchase.getPurchaseName(), purchase.getPurchaseCost(), purchase.getDate()), links);
     }
 
-    public MappingJacksonValue getAllUserPurchases(Long user_id) {
+    public List<EntityModel<PurchaseDTO>> getAllUserPurchases(Long user_id) {
         List<Purchase> purchases = purchaseRepo.findAllByUser(userRepo.findById(user_id).orElseThrow());
-        List<EntityModel<Purchase>> purchasesResource = purchases.stream().map(resourceAssembler::toModel).collect(Collectors.toList());
-        return jacksonSerializer.getFilteringJacksonValuePurchase(getCollectionModel(purchasesResource, user_id));
+        return purchases.stream().map(e -> {
+            Links links = resourceAssembler.toModel(e).getLinks();
+            return EntityModel.of(new PurchaseDTO(e.getPurchaseName(), e.getPurchaseCost(), e.getDate()), links);
+        }).collect(Collectors.toList());
     }
 
-    public MappingJacksonValue getOnePurchase(Long purchase_id) {
+    public EntityModel<PurchaseDTO> getOnePurchase(Long purchase_id) {
         Purchase entity = purchaseRepo.findById(purchase_id).orElseThrow();
-        EntityModel<Purchase> purchase = resourceAssembler.toModel(entity);
-        return jacksonSerializer.getFilteringJacksonValuePurchase(getCollectionModel(List.of(purchase), entity.getUser().getId()));
+        Links links = resourceAssembler.toModel(entity).getLinks();
+        return EntityModel.of(new PurchaseDTO(entity.getPurchaseName(), entity.getPurchaseCost(), entity.getDate()), links);
     }
 
     private CollectionModel<EntityModel<Purchase>> getCollectionModel(List<EntityModel<Purchase>> purchase, Long user_id){
