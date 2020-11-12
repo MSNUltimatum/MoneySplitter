@@ -13,5 +13,5 @@ public interface PurchaseRepo extends JpaRepository<Purchase, Long> {
     List<Purchase> findAllByUser(User user);
 
     @Query("SELECT p FROM Purchase p WHERE p.date >= ?1 AND p.date <= ?2 AND p.user = ?3")
-    Collection<Purchase> findAllBetweenDates(LocalDate startDate, LocalDate endDate, User user);
+    Collection<Purchase> findAllBetweenDates(String startDate, String endDate, User user);
 }

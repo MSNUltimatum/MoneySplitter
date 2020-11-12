@@ -23,4 +23,12 @@ public class UserStatistic {
     private BigDecimal totalSpend = BigDecimal.ZERO;
 
     private String updatingDate;
+
+    public UserStatistic(User user, BigDecimal totalSpend) {
+        this.user = user;
+        this.totalSpend = totalSpend;
+    }
+
+    public UserStatistic() {
+    }
 }

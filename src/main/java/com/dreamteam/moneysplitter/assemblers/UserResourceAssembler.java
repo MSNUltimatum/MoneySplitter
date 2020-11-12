@@ -25,7 +25,7 @@ public class UserResourceAssembler implements RepresentationModelAssembler<User,
                 linkTo(methodOn(UserProfileController.class).myProfile(entity.getId())).withSelfRel(),
                 linkTo(methodOn(EventController.class).getMyEvents(entity.getId())).withRel("events"),
                 linkTo(methodOn(PurchaseController.class).addOwnPurchase(entity.getId(), null)).withRel("addPurchase"),
-                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(entity.getId())).withRel("addPurchase")
+                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(entity.getId())).withRel("getAllPurchases")
                 );
     }
 }

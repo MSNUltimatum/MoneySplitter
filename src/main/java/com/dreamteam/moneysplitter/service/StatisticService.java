@@ -48,6 +48,16 @@ public class StatisticService {
         userStatisticRepo.save(byUser);
     }
 
+    public MappingJacksonValue getIntervalStatistic(Long user_id, String startDate, String endDate){
+        User user = userRepo.findById(user_id).orElseThrow();
+        Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
+        BigDecimal totalSpendByInterval = byDayInterval.stream()
+                .map(Purchase::getPurchaseCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        EntityModel<UserStatistic> userStatisticEntityModel = statisticResourceAssembler.toModel(new UserStatistic(user, totalSpendByInterval));
+        return jacksonSerializer.getFilteringJacksonValueStatistic(userStatisticEntityModel);
+    }
+
     EntityModel<UserStatistic> getStatisticEntityModel(User user) {
         UserStatistic entity = userStatisticRepo.findByUser(user);
         return statisticResourceAssembler.toModel(entity);
@@ -56,13 +66,5 @@ public class StatisticService {
     EntityModel<UserStatistic> getStatisticEntityModel(Long user_id) {
         UserStatistic entity = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
         return statisticResourceAssembler.toModel(entity);
-    }
-
-    public Map<String, Object> getIntervalStatistic(Long user_id, LocalDate startDate, LocalDate endDate){
-        User user = userRepo.findById(user_id).orElseThrow();
-        Map<String, Object> map = new HashMap<>();
-        Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
-        map.put("purchases", byDayInterval);
-        return map;
     }
 }

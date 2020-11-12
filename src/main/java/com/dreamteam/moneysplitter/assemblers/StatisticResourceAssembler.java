@@ -1,6 +1,7 @@
 package com.dreamteam.moneysplitter.assemblers;
 
 import com.dreamteam.moneysplitter.controller.StatisticController;
+import com.dreamteam.moneysplitter.controller.UserProfileController;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -17,8 +18,9 @@ public class StatisticResourceAssembler implements RepresentationModelAssembler<
     public EntityModel<UserStatistic> toModel(UserStatistic entity) {
         return EntityModel.of(entity,
                 linkTo(methodOn(StatisticController.class).getMonthStatistic(entity.getUser().getId())).withSelfRel(),
+                linkTo(methodOn(UserProfileController.class).myProfile(entity.getUser().getId())).withRel("userProfile"),
                 linkTo(methodOn(StatisticController.class).getPeriodStatistic(entity.getUser().getId(),
-                                                                              Optional.empty(),
-                                                                              Optional.empty())).withRel("intervalStatistic"));
+                                                                              "",
+                                                                              "")).withRel("intervalStatistic"));
     }
 }

@@ -32,12 +32,12 @@ public class StatisticController {
 
     @GetMapping("/{id}/{startDate}/{endDate}")
     public ResponseEntity<Object> getPeriodStatistic(@PathVariable("id") Long user_id,
-                                                     @PathVariable Optional<LocalDate> startDate,
-                                                     @PathVariable Optional<LocalDate> endDate){
-        if(startDate.isPresent() && endDate.isPresent()){
+                                                     @PathVariable("startDate") String startDate,
+                                                     @PathVariable("endDate") String endDate){
+        if(!startDate.isBlank() && !endDate.isBlank()){
             return ResponseEntity.ok().body(statisticService.getIntervalStatistic(user_id,
-                                                                                  startDate.get(),
-                                                                                  endDate.get()));
+                                                                                  startDate,
+                                                                                  endDate));
         } else {
             return getMonthStatistic(user_id);
         }
