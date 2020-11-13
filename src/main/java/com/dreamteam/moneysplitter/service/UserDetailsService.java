@@ -1,6 +1,6 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.Repositories.UserRepo;
+import com.dreamteam.moneysplitter.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

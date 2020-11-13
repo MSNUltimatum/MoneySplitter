@@ -1,7 +1,7 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.Repositories.UserRepo;
-import com.dreamteam.moneysplitter.Repositories.UserStatisticRepo;
+import com.dreamteam.moneysplitter.repositories.UserRepo;
+import com.dreamteam.moneysplitter.repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.assemblers.UserResourceAssembler;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserRoles;
@@ -11,7 +11,6 @@ import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

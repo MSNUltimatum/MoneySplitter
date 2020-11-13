@@ -1,7 +1,7 @@
 package com.dreamteam.moneysplitter.controller;
 
-import com.dreamteam.moneysplitter.Repositories.UserEventRepo;
-import com.dreamteam.moneysplitter.Repositories.UserRepo;
+import com.dreamteam.moneysplitter.repositories.UserEventRepo;
+import com.dreamteam.moneysplitter.repositories.UserRepo;
 import com.dreamteam.moneysplitter.domain.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;

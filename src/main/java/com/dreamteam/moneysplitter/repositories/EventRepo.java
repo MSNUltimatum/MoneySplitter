@@ -1,4 +1,4 @@
-package com.dreamteam.moneysplitter.Repositories;
+package com.dreamteam.moneysplitter.repositories;
 
 import com.dreamteam.moneysplitter.domain.Event;
 import org.springframework.data.jpa.repository.JpaRepository;

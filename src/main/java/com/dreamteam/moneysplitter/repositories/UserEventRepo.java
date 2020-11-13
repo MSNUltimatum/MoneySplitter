@@ -1,4 +1,4 @@
-package com.dreamteam.moneysplitter.Repositories;
+package com.dreamteam.moneysplitter.repositories;
 
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserEvent;

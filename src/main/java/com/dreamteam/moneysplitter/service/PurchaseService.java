@@ -1,7 +1,7 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.Repositories.PurchaseRepo;
-import com.dreamteam.moneysplitter.Repositories.UserRepo;
+import com.dreamteam.moneysplitter.repositories.PurchaseRepo;
+import com.dreamteam.moneysplitter.repositories.UserRepo;
 import com.dreamteam.moneysplitter.assemblers.PurchaseResourceAssembler;
 import com.dreamteam.moneysplitter.controller.PurchaseController;
 import com.dreamteam.moneysplitter.controller.UserProfileController;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

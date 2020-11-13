@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.checkerframework.common.aliasing.qual.Unique;
+import org.hibernate.annotations.Check;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +24,8 @@ import java.util.Set;
 @Table(name = "user_table")
 @Data
 @JsonFilter("userFilter")
-@ToString(exclude = {"friends", "friendsOf"})
-@EqualsAndHashCode(exclude = {"friends", "friendsOf"})
+@ToString(exclude = {"friends"})
+@EqualsAndHashCode(exclude = {"friends"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,10 +51,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<UserRoles> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "friends",
                 joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "friend_id"))
+                inverseJoinColumns = @JoinColumn(name = "friend_id"),
+                uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "friend_id"}))
     private Set<User> friends = new HashSet<>();
 
     @Override

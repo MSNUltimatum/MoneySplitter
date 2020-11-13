@@ -1,8 +1,8 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.Repositories.PurchaseRepo;
-import com.dreamteam.moneysplitter.Repositories.UserRepo;
-import com.dreamteam.moneysplitter.Repositories.UserStatisticRepo;
+import com.dreamteam.moneysplitter.repositories.PurchaseRepo;
+import com.dreamteam.moneysplitter.repositories.UserRepo;
+import com.dreamteam.moneysplitter.repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.assemblers.StatisticResourceAssembler;
 import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.User;
@@ -11,7 +11,6 @@ import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

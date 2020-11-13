@@ -1,6 +1,6 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.Repositories.UserStatisticRepo;
+import com.dreamteam.moneysplitter.repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

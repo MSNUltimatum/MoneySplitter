@@ -1,8 +1,6 @@
 package com.dreamteam.moneysplitter.assemblers;
 
-import com.dreamteam.moneysplitter.controller.EventController;
-import com.dreamteam.moneysplitter.controller.PurchaseController;
-import com.dreamteam.moneysplitter.controller.UserProfileController;
+import com.dreamteam.moneysplitter.controller.*;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -26,7 +24,9 @@ public class UserResourceAssembler implements RepresentationModelAssembler<UserD
                 linkTo(methodOn(UserProfileController.class).myProfile(entity.getId())).withSelfRel(),
                 linkTo(methodOn(EventController.class).getMyEvents(entity.getId())).withRel("events"),
                 linkTo(methodOn(PurchaseController.class).addOwnPurchase(entity.getId(), null)).withRel("addPurchase"),
-                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(entity.getId())).withRel("getAllPurchases")
+                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(entity.getId())).withRel("getAllPurchases"),
+                linkTo(methodOn(RelationshipsController.class).getMyFriends(entity.getId())).withRel("getAllFriends"),
+                linkTo(methodOn(FriendshipRequestsController.class).getAllUserFriendshipRequests(entity.getId())).withRel("allFriendshipsRequests")
                 );
     }
 }
