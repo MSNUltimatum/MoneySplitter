@@ -1,6 +1,7 @@
 package com.dreamteam.moneysplitter.service;
 
 import com.dreamteam.moneysplitter.domain.dto.Friendship;
+import com.dreamteam.moneysplitter.domain.dto.FriendshipRequestDTO;
 import com.dreamteam.moneysplitter.repositories.FriendshipsRequestRepo;
 import com.dreamteam.moneysplitter.repositories.UserRepo;
 import com.dreamteam.moneysplitter.assemblers.FriendshipRequestResourceAssembler;
@@ -10,6 +11,7 @@ import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Links;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -42,8 +44,10 @@ public class RelationshipsService {
     public void sendFriendshipRequest(Long userId, Long friendId){
         User sourceUser= userRepo.findById(userId).orElseThrow();
         User destinationUser = userRepo.findById(friendId).orElseThrow();
-        FriendshipRequest friendshipRequest = new FriendshipRequest(sourceUser, destinationUser);
-        friendshipsRequestRepo.save(friendshipRequest);
+        if(!sourceUser.getFriends().contains(destinationUser)) {
+            FriendshipRequest friendshipRequest = new FriendshipRequest(sourceUser, destinationUser);
+            friendshipsRequestRepo.save(friendshipRequest);
+        }
     }
 
     public void deleteFromFriend(Long userId, Long friendId) {
@@ -64,11 +68,17 @@ public class RelationshipsService {
         }
     }
 
-    public Set<EntityModel<FriendshipRequest>> getAllFriendshipRequests(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow(); //TODO выдавать DTO объект!
+    public Set<EntityModel<FriendshipRequestDTO>> getAllFriendshipRequests(Long userId) {
+        User user = userRepo.findById(userId).orElseThrow();
         Set<FriendshipRequest> allBySourceUser = friendshipsRequestRepo.findAllByDestinationUser(user);
         return allBySourceUser.stream()
-                .map(resourceAssembler::toModel)
+                .map(e -> {
+                    Links links = resourceAssembler.toModel(e).getLinks();
+                    return EntityModel.of(new FriendshipRequestDTO(new UserDTO(e.getSourceUser().getId(),
+                            e.getSourceUser().getFirstName(),
+                            e.getSourceUser().getSecondName(),
+                            e.getSourceUser().getEmail())), links);
+                })
                 .collect(Collectors.toSet());
     }
 

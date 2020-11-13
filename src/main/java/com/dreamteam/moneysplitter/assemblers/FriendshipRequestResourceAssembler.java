@@ -17,7 +17,7 @@ public class FriendshipRequestResourceAssembler implements RepresentationModelAs
     public EntityModel<FriendshipRequest> toModel(FriendshipRequest entity) {
         return EntityModel.of(entity,
                 linkTo(methodOn(UserProfileController.class).myProfile(entity.getDestinationUser().getId())).withRel("profile"),
-                linkTo(methodOn(FriendshipRequestsController.class).getAllUserFriendshipRequests(entity.getSourceUser().getId())).withRel("allUserRequests"),
+                linkTo(methodOn(FriendshipRequestsController.class).getAllUserFriendshipRequests(entity.getDestinationUser().getId())).withRel("allUserRequests"),
                 linkTo(methodOn(FriendshipRequestsController.class).getOneFriendshipRequest(entity.getRequestId())).withSelfRel(),
                 linkTo(methodOn(FriendshipRequestsController.class).applyRequest(entity.getDestinationUser().getId(), entity.getRequestId())).withRel("apply"),
                 linkTo(methodOn(FriendshipRequestsController.class).rejectRequest(entity.getDestinationUser().getId(), entity.getRequestId())).withRel("reject")

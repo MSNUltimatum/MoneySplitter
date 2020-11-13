@@ -1,6 +1,7 @@
 package com.dreamteam.moneysplitter.controller;
 
 import com.dreamteam.moneysplitter.domain.FriendshipRequest;
+import com.dreamteam.moneysplitter.domain.dto.FriendshipRequestDTO;
 import com.dreamteam.moneysplitter.service.RelationshipsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -26,7 +27,7 @@ public class FriendshipRequestsController {
 
     @GetMapping("/{id}/getAllUserRequests")
     public ResponseEntity<Object> getAllUserFriendshipRequests(@PathVariable("id") Long userId){
-        Set<EntityModel<FriendshipRequest>> allFriendshipRequests = relationshipsService.getAllFriendshipRequests(userId);
+        Set<EntityModel<FriendshipRequestDTO>> allFriendshipRequests = relationshipsService.getAllFriendshipRequests(userId);
         return ResponseEntity.ok(allFriendshipRequests);
     }
 
