@@ -1,6 +1,6 @@
 package com.dreamteam.moneysplitter.service;
 
-import com.dreamteam.moneysplitter.domain.dto.Friendship;
+import com.dreamteam.moneysplitter.domain.dto.FriendshipDTO;
 import com.dreamteam.moneysplitter.domain.dto.FriendshipRequestDTO;
 import com.dreamteam.moneysplitter.repositories.FriendshipsRequestRepo;
 import com.dreamteam.moneysplitter.repositories.UserRepo;
@@ -34,15 +34,24 @@ public class RelationshipsService {
         this.relationshipsResourceAssembler = relationshipsResourceAssembler;
     }
 
-    public Set<EntityModel<UserDTO>> getUserFriends(Long user_id){
-        User user = userRepo.findById(user_id).orElseThrow();
+    public Set<EntityModel<UserDTO>> getUserFriends(String principal){
+        User user = userRepo.findByEmail(principal);
+        return getEntityModels(user);
+    }
+
+    public Set<EntityModel<UserDTO>> getUserFriends(Long userId){
+        User user = userRepo.findById(userId).orElseThrow();
+        return getEntityModels(user);
+    }
+
+    private Set<EntityModel<UserDTO>> getEntityModels(User user) {
         return user.getFriends().stream()
-                .map(e -> relationshipsResourceAssembler.toModel(new Friendship(user, new UserDTO(e.getId(),e.getFirstName(), e.getSecondName(), e.getEmail()))))
+                .map(e -> relationshipsResourceAssembler.toModel(new FriendshipDTO(user, new UserDTO(e.getId(),e.getFirstName(), e.getSecondName(), e.getEmail()))))
                 .collect(Collectors.toSet());
     }
 
-    public void sendFriendshipRequest(Long userId, Long friendId){
-        User sourceUser= userRepo.findById(userId).orElseThrow();
+    public void sendFriendshipRequest(String principal, Long friendId){
+        User sourceUser= userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
         if(!sourceUser.getFriends().contains(destinationUser)) {
             FriendshipRequest friendshipRequest = new FriendshipRequest(sourceUser, destinationUser);
@@ -50,8 +59,8 @@ public class RelationshipsService {
         }
     }
 
-    public void deleteFromFriend(Long userId, Long friendId) {
-        User sourceUser= userRepo.findById(userId).orElseThrow();
+    public void deleteFromFriend(String principal, Long friendId) {
+        User sourceUser= userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
         if (sourceUser.getFriends().contains(destinationUser)){
             sourceUser.getFriends().remove(destinationUser);
@@ -68,8 +77,8 @@ public class RelationshipsService {
         }
     }
 
-    public Set<EntityModel<FriendshipRequestDTO>> getAllFriendshipRequests(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow();
+    public Set<EntityModel<FriendshipRequestDTO>> getAllFriendshipRequests(String principal) {
+        User user = userRepo.findByEmail(principal);
         Set<FriendshipRequest> allBySourceUser = friendshipsRequestRepo.findAllByDestinationUser(user);
         return allBySourceUser.stream()
                 .map(e -> {
@@ -87,9 +96,10 @@ public class RelationshipsService {
         return resourceAssembler.toModel(friendshipRequest);
     }
 
-    public void applyRequest(Long requestId, Long userId) {
+    public void applyRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
-        if(userId.equals(friendshipRequest.getDestinationUser().getId())) {
+        User user = userRepo.findByEmail(principal);
+        if(user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
             friendshipRequest.getDestinationUser().getFriends().add(friendshipRequest.getSourceUser());
             friendshipRequest.getSourceUser().getFriends().add(friendshipRequest.getDestinationUser());
             userRepo.save(friendshipRequest.getDestinationUser());
@@ -100,9 +110,10 @@ public class RelationshipsService {
         }
     }
 
-    public void rejectRequest(Long requestId, Long userId) {
+    public void rejectRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
-        if(userId.equals(friendshipRequest.getDestinationUser().getId())) {
+        User user = userRepo.findByEmail(principal);
+        if(user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
             friendshipsRequestRepo.delete(friendshipRequest);
         } else {
             throw new IllegalStateException();

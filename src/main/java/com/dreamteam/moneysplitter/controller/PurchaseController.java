@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -24,19 +25,20 @@ public class PurchaseController {
         this.purchaseService = purchaseService;
     }
 
-    @PostMapping("{id}/addOwnPurchase")
-    public ResponseEntity<Object> addOwnPurchase(@NotNull @PathVariable("id")Long user_id,
-                                                              @RequestBody(required = false) Purchase purchase){
-        if(purchase != null) {
-            EntityModel<PurchaseDTO> mappingJacksonValue = purchaseService.addOwnUserPurchase(user_id, purchase);
+    @PostMapping("/addOwnPurchase")
+    public ResponseEntity<Object> addOwnPurchase(@RequestBody(required = false) Purchase purchase){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(purchase != null && !principal.isBlank()) {
+            EntityModel<PurchaseDTO> mappingJacksonValue = purchaseService.addOwnUserPurchase(principal, purchase);
             return ResponseEntity.ok(mappingJacksonValue);
         }
         return (ResponseEntity<Object>) ResponseEntity.notFound();
     }
 
-    @GetMapping("{id}/getAllUserPurchases")
-    public ResponseEntity<Object> getAllUserPurchases(@NotNull @PathVariable("id")Long user_id){
-        List<EntityModel<PurchaseDTO>> allUserPurchases = purchaseService.getAllUserPurchases(user_id);
+    @GetMapping("/getAllUserPurchases")
+    public ResponseEntity<Object> getAllUserPurchases(){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<EntityModel<PurchaseDTO>> allUserPurchases = purchaseService.getAllUserPurchases(principal);
         return ResponseEntity.ok(allUserPurchases);
     }
 

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Friendship {
+public class FriendshipDTO {
     private User sourceUser;
     private UserDTO destinationUser;
 }

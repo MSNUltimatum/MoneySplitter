@@ -1,12 +1,16 @@
 package com.dreamteam.moneysplitter.controller;
 
+import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.dreamteam.moneysplitter.service.RelationshipsService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -25,29 +29,26 @@ public class RelationshipsController {
         this.relationshipsService = relationshipsService;
     }
 
-    @GetMapping("/{id}/getFriends")
-    public ResponseEntity<Object> getMyFriends(@PathVariable("id") Long user_id){
-        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(user_id),
-                linkTo(methodOn(UserProfileController.class).myProfile(user_id)).withRel("profile")));
+    @GetMapping("/getFriends")
+    public ResponseEntity<Object> getMyFriends(){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),
+                linkTo(methodOn(UserProfileController.class).myProfile()).withRel("profile")));
     }
 
-    @PostMapping("/{user_id}/addToFriend/{friend_id}")
-    public ResponseEntity<Object> addToFriends(@PathVariable("user_id") Long userId,
-                                               @PathVariable("friend_id") Long friendId){
-        if(!userId.equals(friendId)){
-            relationshipsService.sendFriendshipRequest(userId, friendId);
-        }
-        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(userId),
-                linkTo(methodOn(UserProfileController.class).myProfile(userId)).withRel("profile")));
+    @PostMapping("/addToFriend/{friend_id}")
+    public ResponseEntity<Object> addToFriends(@PathVariable("friend_id") Long friendId){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        relationshipsService.sendFriendshipRequest(principal, friendId);
+        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),
+                linkTo(methodOn(UserProfileController.class).myProfile()).withRel("profile")));
     }
 
-    @PostMapping("/{user_id}/deleteFromFriends/{friend_id}")
-    public ResponseEntity<Object> deleteFriend(@PathVariable("user_id") Long userId,
-                                               @PathVariable("friend_id") Long friendId){
-        if(!userId.equals(friendId)){
-            relationshipsService.deleteFromFriend(userId, friendId);
-        }
-        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(userId),
-                linkTo(methodOn(UserProfileController.class).myProfile(userId)).withRel("profile")));
+    @PostMapping("/deleteFromFriends/{friend_id}")
+    public ResponseEntity<Object> deleteFriend(@PathVariable("friend_id") Long friendId){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        relationshipsService.deleteFromFriend(principal, friendId);
+        return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),
+                linkTo(methodOn(UserProfileController.class).myProfile()).withRel("profile")));
     }
 }

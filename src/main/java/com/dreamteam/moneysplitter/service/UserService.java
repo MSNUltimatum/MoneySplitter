@@ -1,12 +1,12 @@
 package com.dreamteam.moneysplitter.service;
 
+import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import com.dreamteam.moneysplitter.repositories.UserRepo;
 import com.dreamteam.moneysplitter.repositories.UserStatisticRepo;
 import com.dreamteam.moneysplitter.assemblers.UserResourceAssembler;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.UserRoles;
 import com.dreamteam.moneysplitter.domain.UserStatistic;
-import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +40,19 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Map<String, Object> getUserProfile(Long user_id){
-        EntityModel<UserDTO> user = getUserEntityModel(user_id);
-        EntityModel<StatisticDTO> statisticEntityModel = statisticService.getStatisticEntityModel(user_id);
-        Map<String, Object> profile = new HashMap<>();
-        profile.put("user", user);
-        profile.put("statistic", statisticEntityModel);
-        return profile;
+    public EntityModel<UserDTO> getUserProfile(String principal){
+        User entity = userRepo.findByEmail(principal);
+        return getUserEntityModel(entity);
     }
 
-    private EntityModel<UserDTO> getUserEntityModel(Long user_id) {
-        User entity = userRepo.findById(user_id).orElseThrow();
+    public EntityModel<UserDTO> getUserProfile(Long userId){
+        User entity = userRepo.findById(userId).orElseThrow();
+        return getUserEntityModel(entity);
+    }
+
+    private EntityModel<UserDTO> getUserEntityModel(User entity) {
+        if(entity == null)
+            throw new IllegalStateException("Empty principal");
         return userResourceAssembler.toModel(new UserDTO(entity.getId(),
                 entity.getFirstName(),
                 entity.getSecondName(),

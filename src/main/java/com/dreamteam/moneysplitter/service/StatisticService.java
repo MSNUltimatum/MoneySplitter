@@ -35,18 +35,18 @@ public class StatisticService {
         this.userRepo = userRepo;
     }
 
-    public EntityModel<StatisticDTO> getMonthStatistic(Long user_id){
-        return getStatisticEntityModel(userRepo.findById(user_id).orElseThrow());
+    public EntityModel<StatisticDTO> getMonthStatistic(String principal){
+        return getStatisticEntityModel(userRepo.findByEmail(principal));
     }
 
-    public void addToStatistic(Long user_id, BigDecimal cost){
-        UserStatistic byUser = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
+    public void addToStatistic(String principal, BigDecimal cost){
+        UserStatistic byUser = userStatisticRepo.findByUser(userRepo.findByEmail(principal));
         byUser.setTotalSpend(byUser.getTotalSpend().add(cost));
         userStatisticRepo.save(byUser);
     }
 
-    public EntityModel<StatisticDTO> getIntervalStatistic(Long user_id, String startDate, String endDate){
-        User user = userRepo.findById(user_id).orElseThrow();
+    public EntityModel<StatisticDTO> getIntervalStatistic(String principal, String startDate, String endDate){
+        User user = userRepo.findByEmail(principal);
         Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
         BigDecimal totalSpendByInterval = byDayInterval.stream()
                 .map(Purchase::getPurchaseCost)
@@ -61,8 +61,8 @@ public class StatisticService {
         return EntityModel.of(new StatisticDTO(entity.getTotalSpend()), links);
     }
 
-    EntityModel<StatisticDTO> getStatisticEntityModel(Long user_id) {
-        UserStatistic entity = userStatisticRepo.findByUser(userRepo.findById(user_id).orElseThrow());
+    EntityModel<StatisticDTO> getStatisticEntityModel(String principal) {
+        UserStatistic entity = userStatisticRepo.findByUser(userRepo.findByEmail(principal));
         Links links = statisticResourceAssembler.toModel(entity).getLinks();
         return EntityModel.of(new StatisticDTO(entity.getTotalSpend()), links);
     }

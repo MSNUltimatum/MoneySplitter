@@ -39,17 +39,17 @@ public class PurchaseService {
         this.statisticService = statisticService;
     }
 
-    public EntityModel<PurchaseDTO> addOwnUserPurchase(Long user_id, Purchase purchase){
-        purchase.setUser(userRepo.findById(user_id).orElseThrow());
+    public EntityModel<PurchaseDTO> addOwnUserPurchase(String principal, Purchase purchase){
+        purchase.setUser(userRepo.findByEmail(principal));
         purchase.setDate(LocalDate.now().toString());
-        statisticService.addToStatistic(user_id, purchase.getPurchaseCost());
+        statisticService.addToStatistic(principal, purchase.getPurchaseCost());
         Purchase save = purchaseRepo.save(purchase);
         Links links = resourceAssembler.toModel(save).getLinks();
         return EntityModel.of(new PurchaseDTO(purchase.getPurchaseName(), purchase.getPurchaseCost(), purchase.getDate()), links);
     }
 
-    public List<EntityModel<PurchaseDTO>> getAllUserPurchases(Long user_id) {
-        List<Purchase> purchases = purchaseRepo.findAllByUser(userRepo.findById(user_id).orElseThrow());
+    public List<EntityModel<PurchaseDTO>> getAllUserPurchases(String principal) {
+        List<Purchase> purchases = purchaseRepo.findAllByUser(userRepo.findByEmail(principal));
         return purchases.stream().map(e -> {
             Links links = resourceAssembler.toModel(e).getLinks();
             return EntityModel.of(new PurchaseDTO(e.getPurchaseName(), e.getPurchaseCost(), e.getDate()), links);
@@ -62,10 +62,10 @@ public class PurchaseService {
         return EntityModel.of(new PurchaseDTO(entity.getPurchaseName(), entity.getPurchaseCost(), entity.getDate()), links);
     }
 
-    private CollectionModel<EntityModel<Purchase>> getCollectionModel(List<EntityModel<Purchase>> purchase, Long user_id){
-        return CollectionModel.of(purchase,
-                linkTo(methodOn(UserProfileController.class).myProfile(user_id)).withRel("user"),
-                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(user_id)).withSelfRel());
-    }
+//    private CollectionModel<EntityModel<Purchase>> getCollectionModel(List<EntityModel<Purchase>> purchase, Long user_id){
+//        return CollectionModel.of(purchase,
+//                linkTo(methodOn(UserProfileController.class).myProfile(user_id)).withRel("user"),
+//                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(user_id)).withSelfRel());
+//    }
 
 }
