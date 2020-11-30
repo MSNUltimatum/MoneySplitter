@@ -28,7 +28,7 @@ public class StatisticController {
     }
 
     @GetMapping("/getMonthStatistic")
-    public ResponseEntity<Object> getMonthStatistic(){
+    public ResponseEntity<Object> getMonthStatistic() {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         EntityModel<StatisticDTO> statistic = statisticService.getMonthStatistic(principal);
         return ResponseEntity.ok().body(statistic);
@@ -36,12 +36,12 @@ public class StatisticController {
 
     @GetMapping("/{startDate}/{endDate}")
     public ResponseEntity<Object> getPeriodStatistic(@PathVariable("startDate") String startDate,
-                                                     @PathVariable("endDate") String endDate){
+                                                     @PathVariable("endDate") String endDate) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!startDate.isBlank() && !endDate.isBlank()){
+        if (!startDate.isBlank() && !endDate.isBlank()) {
             return ResponseEntity.ok().body(statisticService.getIntervalStatistic(principal,
-                                                                                  startDate,
-                                                                                  endDate));
+                    startDate,
+                    endDate));
         } else {
             return getMonthStatistic();
         }

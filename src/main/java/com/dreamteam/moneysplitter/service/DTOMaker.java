@@ -1,8 +1,10 @@
 package com.dreamteam.moneysplitter.service;
 
 import com.dreamteam.moneysplitter.domain.Event;
+import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.EventDTO;
+import com.dreamteam.moneysplitter.domain.dto.PurchaseDTO;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 
 public class DTOMaker {
@@ -11,6 +13,10 @@ public class DTOMaker {
     }
 
     public static EventDTO getEventDTO(Event event){
-        return new EventDTO(event.getId(),event.getDateOpen(), event.getDateClosed(), event.getName());
+        return new EventDTO(event.getId(),event.getDateOpen(), event.getDateClosed(), getUserDTO(event.getOwner()), event.getName());
+    }
+
+    public static PurchaseDTO getPurchaseDTO(Purchase purchase){
+        return new PurchaseDTO(getUserDTO(purchase.getUser()), purchase.getPurchaseName(), purchase.getPurchaseCost(), purchase.getDate());
     }
 }

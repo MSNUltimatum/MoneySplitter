@@ -16,7 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class PurchaseResourceAssembler implements RepresentationModelAssembler<Purchase, EntityModel<Purchase>> {
+public class PrivatePurchaseResourceAssembler implements RepresentationModelAssembler<Purchase, EntityModel<Purchase>> {
 
     @Override
     public EntityModel<Purchase> toModel(Purchase entity) {

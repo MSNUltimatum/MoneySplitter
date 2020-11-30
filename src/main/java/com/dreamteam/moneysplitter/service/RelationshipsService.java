@@ -34,42 +34,42 @@ public class RelationshipsService {
         this.relationshipsResourceAssembler = relationshipsResourceAssembler;
     }
 
-    public Set<EntityModel<UserDTO>> getUserFriends(String principal){
+    public Set<EntityModel<UserDTO>> getUserFriends(String principal) {
         User user = userRepo.findByEmail(principal);
         return getEntityModels(user);
     }
 
-    public Set<EntityModel<UserDTO>> getUserFriends(Long userId){
+    public Set<EntityModel<UserDTO>> getUserFriends(Long userId) {
         User user = userRepo.findById(userId).orElseThrow();
         return getEntityModels(user);
     }
 
     private Set<EntityModel<UserDTO>> getEntityModels(User user) {
         return user.getFriends().stream()
-                .map(e -> relationshipsResourceAssembler.toModel(new FriendshipDTO(user, new UserDTO(e.getId(),e.getFirstName(), e.getSecondName(), e.getEmail()))))
+                .map(e -> relationshipsResourceAssembler.toModel(new FriendshipDTO(user, new UserDTO(e.getId(), e.getFirstName(), e.getSecondName(), e.getEmail()))))
                 .collect(Collectors.toSet());
     }
 
-    public void sendFriendshipRequest(String principal, Long friendId){
-        User sourceUser= userRepo.findByEmail(principal);
+    public void sendFriendshipRequest(String principal, Long friendId) {
+        User sourceUser = userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
-        if(!sourceUser.getFriends().contains(destinationUser)) {
+        if (!sourceUser.getFriends().contains(destinationUser)) {
             FriendshipRequest friendshipRequest = new FriendshipRequest(sourceUser, destinationUser);
             friendshipsRequestRepo.save(friendshipRequest);
         }
     }
 
     public void deleteFromFriend(String principal, Long friendId) {
-        User sourceUser= userRepo.findByEmail(principal);
+        User sourceUser = userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
-        if (sourceUser.getFriends().contains(destinationUser)){
+        if (sourceUser.getFriends().contains(destinationUser)) {
             sourceUser.getFriends().remove(destinationUser);
             userRepo.save(sourceUser);
         } else {
             throw new IllegalStateException();
         }
 
-        if (destinationUser.getFriends().contains(sourceUser)){
+        if (destinationUser.getFriends().contains(sourceUser)) {
             destinationUser.getFriends().remove(sourceUser);
             userRepo.save(destinationUser);
         } else {
@@ -99,7 +99,7 @@ public class RelationshipsService {
     public void applyRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
         User user = userRepo.findByEmail(principal);
-        if(user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
+        if (user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
             friendshipRequest.getDestinationUser().getFriends().add(friendshipRequest.getSourceUser());
             friendshipRequest.getSourceUser().getFriends().add(friendshipRequest.getDestinationUser());
             userRepo.save(friendshipRequest.getDestinationUser());
@@ -113,7 +113,7 @@ public class RelationshipsService {
     public void rejectRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
         User user = userRepo.findByEmail(principal);
-        if(user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
+        if (user.getId().equals(friendshipRequest.getDestinationUser().getId())) {
             friendshipsRequestRepo.delete(friendshipRequest);
         } else {
             throw new IllegalStateException();

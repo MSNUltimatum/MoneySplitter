@@ -9,5 +9,6 @@ public class EventDTO {
     private Long eventId;
     private String dateOpen;
     private String dateClosed;
+    private UserDTO owner;
     private String name;
 }

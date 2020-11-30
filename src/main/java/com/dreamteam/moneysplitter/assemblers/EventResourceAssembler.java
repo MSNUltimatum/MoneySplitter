@@ -15,6 +15,9 @@ public class EventResourceAssembler implements RepresentationModelAssembler<Even
     @Override
     public EntityModel<EventDTO> toModel(EventDTO entity) {
         return EntityModel.of(entity,
-                linkTo(methodOn(EventController.class).getEventById(entity.getEventId())).withSelfRel());
+                linkTo(methodOn(EventController.class).getEventById(entity.getEventId())).withSelfRel(),
+                linkTo(methodOn(EventController.class).getMyEvents()).withRel("allMyEvents"),
+                linkTo(methodOn(EventController.class).addPurchaseToEvent(entity.getEventId(), null)).withRel("AddPurchase"),
+                linkTo(methodOn(EventController.class).addUserToEvent(null, entity.getEventId())).withRel("addUser"));
     }
 }

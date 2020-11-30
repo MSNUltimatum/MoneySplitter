@@ -40,18 +40,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public EntityModel<UserDTO> getUserProfile(String principal){
+    public EntityModel<UserDTO> getUserProfile(String principal) {
         User entity = userRepo.findByEmail(principal);
         return getUserEntityModel(entity);
     }
 
-    public EntityModel<UserDTO> getUserProfile(Long userId){
+    public EntityModel<UserDTO> getUserProfile(Long userId) {
         User entity = userRepo.findById(userId).orElseThrow();
         return getUserEntityModel(entity);
     }
 
     private EntityModel<UserDTO> getUserEntityModel(User entity) {
-        if(entity == null)
+        if (entity == null)
             throw new IllegalStateException("Empty principal");
         return userResourceAssembler.toModel(new UserDTO(entity.getId(),
                 entity.getFirstName(),
@@ -59,7 +59,7 @@ public class UserService {
                 entity.getEmail()));
     }
 
-    public User createUser(User user){
+    public User createUser(User user) {
         user.setRoles(Sets.newHashSet(UserRoles.USER));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         UserStatistic userStatistic = new UserStatistic();

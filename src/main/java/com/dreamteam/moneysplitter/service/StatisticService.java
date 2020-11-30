@@ -35,17 +35,17 @@ public class StatisticService {
         this.userRepo = userRepo;
     }
 
-    public EntityModel<StatisticDTO> getMonthStatistic(String principal){
+    public EntityModel<StatisticDTO> getMonthStatistic(String principal) {
         return getStatisticEntityModel(userRepo.findByEmail(principal));
     }
 
-    public void addToStatistic(String principal, BigDecimal cost){
+    public void addToStatistic(String principal, BigDecimal cost) {
         UserStatistic byUser = userStatisticRepo.findByUser(userRepo.findByEmail(principal));
         byUser.setTotalSpend(byUser.getTotalSpend().add(cost));
         userStatisticRepo.save(byUser);
     }
 
-    public EntityModel<StatisticDTO> getIntervalStatistic(String principal, String startDate, String endDate){
+    public EntityModel<StatisticDTO> getIntervalStatistic(String principal, String startDate, String endDate) {
         User user = userRepo.findByEmail(principal);
         Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);
         BigDecimal totalSpendByInterval = byDayInterval.stream()

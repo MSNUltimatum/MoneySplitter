@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 public class PurchaseDTO {
+    private UserDTO user;
     private String purchaseName;
     private BigDecimal purchaseCost;
 

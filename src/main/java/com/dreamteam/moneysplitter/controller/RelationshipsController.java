@@ -30,14 +30,14 @@ public class RelationshipsController {
     }
 
     @GetMapping("/getFriends")
-    public ResponseEntity<Object> getMyFriends(){
+    public ResponseEntity<Object> getMyFriends() {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),
                 linkTo(methodOn(UserProfileController.class).myProfile()).withRel("profile")));
     }
 
     @PostMapping("/addToFriend/{friend_id}")
-    public ResponseEntity<Object> addToFriends(@PathVariable("friend_id") Long friendId){
+    public ResponseEntity<Object> addToFriends(@PathVariable("friend_id") Long friendId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         relationshipsService.sendFriendshipRequest(principal, friendId);
         return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),
@@ -45,7 +45,7 @@ public class RelationshipsController {
     }
 
     @PostMapping("/deleteFromFriends/{friend_id}")
-    public ResponseEntity<Object> deleteFriend(@PathVariable("friend_id") Long friendId){
+    public ResponseEntity<Object> deleteFriend(@PathVariable("friend_id") Long friendId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         relationshipsService.deleteFromFriend(principal, friendId);
         return ResponseEntity.ok(CollectionModel.of(relationshipsService.getUserFriends(principal),

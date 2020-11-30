@@ -22,11 +22,12 @@ public class ScheduleService {
     }
 
     @Scheduled(cron = "0 0 1 * * *")
-    private void RebootStatistic(){
+    private void RebootStatistic() {
         List<UserStatistic> all = userStatisticRepo.findAll();
         all.forEach(e -> {
             e.setTotalSpend(BigDecimal.ZERO);
-            e.setUpdatingDate(LocalDate.now().toString()); });
+            e.setUpdatingDate(LocalDate.now().toString());
+        });
         all.forEach(userStatisticRepo::save);
     }
 }

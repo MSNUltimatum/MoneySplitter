@@ -26,9 +26,9 @@ public class PurchaseController {
     }
 
     @PostMapping("/addOwnPurchase")
-    public ResponseEntity<Object> addOwnPurchase(@RequestBody(required = false) Purchase purchase){
+    public ResponseEntity<Object> addOwnPurchase(@RequestBody(required = false) Purchase purchase) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(purchase != null && !principal.isBlank()) {
+        if (purchase != null && !principal.isBlank()) {
             EntityModel<PurchaseDTO> mappingJacksonValue = purchaseService.addOwnUserPurchase(principal, purchase);
             return ResponseEntity.ok(mappingJacksonValue);
         }
@@ -36,14 +36,14 @@ public class PurchaseController {
     }
 
     @GetMapping("/getAllUserPurchases")
-    public ResponseEntity<Object> getAllUserPurchases(){
+    public ResponseEntity<Object> getAllUserPurchases() {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EntityModel<PurchaseDTO>> allUserPurchases = purchaseService.getAllUserPurchases(principal);
         return ResponseEntity.ok(allUserPurchases);
     }
 
     @GetMapping("/getOnePurchase/{purchase_id}")
-    public ResponseEntity<Object> getOnePurchase(@PathVariable("purchase_id")Long purchase_id){
+    public ResponseEntity<Object> getOnePurchase(@PathVariable("purchase_id") Long purchase_id) {
         return ResponseEntity.ok(purchaseService.getOnePurchase(purchase_id));
     }
 }

@@ -29,20 +29,20 @@ public class FriendshipRequestsController {
 
 
     @GetMapping("/getAllUserRequests")
-    public ResponseEntity<Object> getAllUserFriendshipRequests(){
+    public ResponseEntity<Object> getAllUserFriendshipRequests() {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Set<EntityModel<FriendshipRequestDTO>> allFriendshipRequests = relationshipsService.getAllFriendshipRequests(principal);
         return ResponseEntity.ok(allFriendshipRequests);
     }
 
     @GetMapping("/{id}/getFriendshipRequest")
-    public ResponseEntity<Object> getOneFriendshipRequest(@PathVariable("id") Long requestId){
+    public ResponseEntity<Object> getOneFriendshipRequest(@PathVariable("id") Long requestId) {
         EntityModel<FriendshipRequest> request = relationshipsService.getFriendshipRequest(requestId);
         return ResponseEntity.ok(request);
     }
 
     @PostMapping("/applyRequest/{id}")
-    public ResponseEntity<Object> applyRequest(@PathVariable("id") Long requestId){
+    public ResponseEntity<Object> applyRequest(@PathVariable("id") Long requestId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             relationshipsService.applyRequest(requestId, principal);
@@ -54,7 +54,7 @@ public class FriendshipRequestsController {
     }
 
     @PostMapping("/rejectRequest/{id}")
-    public ResponseEntity<Object> rejectRequest(@PathVariable("id") Long requestId){
+    public ResponseEntity<Object> rejectRequest(@PathVariable("id") Long requestId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             relationshipsService.rejectRequest(requestId, principal);

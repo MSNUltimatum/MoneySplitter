@@ -1,6 +1,5 @@
 package com.dreamteam.moneysplitter.controller;
 
-import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.StatisticDTO;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
 import com.dreamteam.moneysplitter.service.RelationshipsService;
@@ -9,8 +8,6 @@ import com.dreamteam.moneysplitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

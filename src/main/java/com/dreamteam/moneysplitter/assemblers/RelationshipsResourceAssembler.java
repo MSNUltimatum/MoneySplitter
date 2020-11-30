@@ -1,6 +1,7 @@
 package com.dreamteam.moneysplitter.assemblers;
 
 import com.dreamteam.moneysplitter.controller.RelationshipsController;
+import com.dreamteam.moneysplitter.controller.UserProfileController;
 import com.dreamteam.moneysplitter.domain.User;
 import com.dreamteam.moneysplitter.domain.dto.FriendshipDTO;
 import com.dreamteam.moneysplitter.domain.dto.UserDTO;
@@ -19,6 +20,7 @@ public class RelationshipsResourceAssembler implements RepresentationModelAssemb
     @Override
     public EntityModel<UserDTO> toModel(FriendshipDTO friendship) {
         return EntityModel.of(friendship.getDestinationUser(),
-                linkTo(methodOn(RelationshipsController.class).deleteFriend(friendship.getDestinationUser().getId())).withSelfRel());
+                linkTo(methodOn(RelationshipsController.class).deleteFriend(friendship.getDestinationUser().getId())).withSelfRel(),
+                linkTo(methodOn(UserProfileController.class).otherUser(friendship.getDestinationUser().getId())).withRel("getProfile"));
     }
 }
