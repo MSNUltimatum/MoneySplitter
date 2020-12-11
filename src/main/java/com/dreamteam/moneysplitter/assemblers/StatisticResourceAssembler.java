@@ -22,6 +22,6 @@ public class StatisticResourceAssembler implements RepresentationModelAssembler<
                 linkTo(methodOn(StatisticController.class).getMonthStatistic()).withSelfRel(),
                 linkTo(methodOn(UserProfileController.class).myProfile()).withRel("userProfile"),
                 linkTo(methodOn(StatisticController.class).getPeriodStatistic("",
-                                                                              "")).withRel("intervalStatistic"));
+                        "")).withRel("intervalStatistic"));
     }
 }

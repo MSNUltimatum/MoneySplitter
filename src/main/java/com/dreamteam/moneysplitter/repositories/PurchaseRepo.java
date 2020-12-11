@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface PurchaseRepo extends JpaRepository<Purchase, Long> {
     List<Purchase> findAllByUser(User user);
+
     List<Purchase> findAllByEvent(Event event);
 
     @Query("SELECT p FROM Purchase p WHERE p.date >= ?1 AND p.date <= ?2 AND p.user = ?3")

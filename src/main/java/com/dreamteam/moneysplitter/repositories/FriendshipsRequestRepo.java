@@ -10,5 +10,6 @@ import java.util.Set;
 @Repository
 public interface FriendshipsRequestRepo extends JpaRepository<FriendshipRequest, Long> {
     Set<FriendshipRequest> findAllBySourceUser(User sourceUser);
+
     Set<FriendshipRequest> findAllByDestinationUser(User user);
 }

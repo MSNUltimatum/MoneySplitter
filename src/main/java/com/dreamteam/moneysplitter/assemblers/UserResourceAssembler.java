@@ -23,7 +23,8 @@ public class UserResourceAssembler implements RepresentationModelAssembler<UserD
                 linkTo(methodOn(PurchaseController.class).getAllUserPurchases()).withRel("getAllPurchases"),
                 linkTo(methodOn(RelationshipsController.class).getMyFriends()).withRel("getAllFriends"),
                 linkTo(methodOn(FriendshipRequestsController.class).getAllUserFriendshipRequests()).withRel("allFriendshipsRequests"),
-                linkTo(methodOn(EventController.class).getMyEvents()).withRel("allMyEvents")
-                );
+                linkTo(methodOn(EventController.class).getMyEvents()).withRel("allMyEvents"),
+                linkTo(methodOn(EventController.class).createEvent(null)).withRel("/createEvent")
+        );
     }
 }

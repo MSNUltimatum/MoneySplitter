@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface UserEventRepo extends JpaRepository<UserEvent, UserEventKey> {
     List<UserEvent> findAllByUser(User user);
+
     List<UserEvent> findAllByEvent(Event event);
 }

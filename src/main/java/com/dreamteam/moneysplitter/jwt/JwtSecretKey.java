@@ -20,7 +20,7 @@ public class JwtSecretKey {
 
 
     @Bean
-    public SecretKey getSecretKeyForSignin(){
+    public SecretKey getSecretKeyForSignin() {
         return Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes());
     }
 }

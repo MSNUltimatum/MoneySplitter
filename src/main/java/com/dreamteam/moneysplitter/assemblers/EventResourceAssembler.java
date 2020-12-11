@@ -17,7 +17,9 @@ public class EventResourceAssembler implements RepresentationModelAssembler<Even
         return EntityModel.of(entity,
                 linkTo(methodOn(EventController.class).getEventById(entity.getEventId())).withSelfRel(),
                 linkTo(methodOn(EventController.class).getMyEvents()).withRel("allMyEvents"),
-                linkTo(methodOn(EventController.class).addPurchaseToEvent(entity.getEventId(), null)).withRel("AddPurchase"),
+                linkTo(methodOn(EventController.class).addPurchaseToEvent(entity.getEventId(), null)).withRel("addPurchase"),
+                linkTo(methodOn(EventController.class).closeEvent(entity.getEventId())).withRel("closeEvent"),
+                linkTo(methodOn(EventController.class).split(entity.getEventId())).withRel("split"),
                 linkTo(methodOn(EventController.class).addUserToEvent(null, entity.getEventId())).withRel("addUser"));
     }
 }

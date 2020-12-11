@@ -1,7 +1,7 @@
 package com.dreamteam.moneysplitter.controller;
 
-import com.dreamteam.moneysplitter.domain.Purchase;
 import com.dreamteam.moneysplitter.domain.dto.EventDTO;
+import com.dreamteam.moneysplitter.domain.dto.MyPartDTO;
 import com.dreamteam.moneysplitter.domain.dto.PurchaseDTO;
 import com.dreamteam.moneysplitter.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class EventController {
         return ResponseEntity.ok(eventById);
     }
 
-    @GetMapping("myEvents")
+    @GetMapping("/myEvents")
     public ResponseEntity<Object> getMyEvents() {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<EntityModel<EventDTO>> allUserEvents = eventService.getAllUserEvents(principal);
@@ -49,10 +49,19 @@ public class EventController {
         return ResponseEntity.ok(event);
     }
 
-    @PostMapping("/addUserToEvent/{user_id}/{event_id}")
-    public ResponseEntity<Object> addUserToEvent(@PathVariable("user_id") Long userId, @PathVariable("event_id") Long eventId){
+    @PostMapping("/closeEvent/{eventId}")
+    public ResponseEntity<Object> closeEvent(@PathVariable Long eventId){
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(eventService.addUserToEvent(eventId, userId, principal)) {
+        if(eventService.closeEvent(principal, eventId)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/addUserToEvent/{user_id}/{event_id}")
+    public ResponseEntity<Object> addUserToEvent(@PathVariable("user_id") Long userId, @PathVariable("event_id") Long eventId) {
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (eventService.addUserToEvent(eventId, userId, principal)) {
             return ResponseEntity.ok(eventService.getEventById(eventId, principal));
         } else {
             return ResponseEntity.badRequest().build();
@@ -60,9 +69,9 @@ public class EventController {
     }
 
     @DeleteMapping("/deleteUserFromEvent/{user_id}/{event_id}")
-    public ResponseEntity<Object> deleteUserFromEvent(@PathVariable("user_id") Long userId, @PathVariable("event_id") Long eventId){
+    public ResponseEntity<Object> deleteUserFromEvent(@PathVariable("user_id") Long userId, @PathVariable("event_id") Long eventId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(eventService.deleteUserFromEvent(eventId, userId, principal)) {
+        if (eventService.deleteUserFromEvent(eventId, userId, principal)) {
             return ResponseEntity.ok(eventService.getEventById(eventId, principal));
         } else {
             return ResponseEntity.badRequest().build();
@@ -71,9 +80,9 @@ public class EventController {
 
     @PostMapping("/addPurchaseToEvent/{event_id}")
     public ResponseEntity<Object> addPurchaseToEvent(@PathVariable("event_id") Long eventId,
-                                                     @RequestBody(required = false)PurchaseDTO purchaseDTO){
+                                                     @RequestBody(required = false) PurchaseDTO purchaseDTO) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(eventService.addPurchaseToEvent(eventId, purchaseDTO, principal)){
+        if (eventService.addPurchaseToEvent(eventId, purchaseDTO, principal)) {
             return ResponseEntity.ok(eventService.getEventById(eventId, principal));
         } else {
             return ResponseEntity.badRequest().build();
@@ -82,14 +91,22 @@ public class EventController {
 
     @DeleteMapping("/deletePurchaseFromEvent/{event_id}/{purchase_id}")
     public ResponseEntity<Object> deletePurchaseFromEvent(@PathVariable("event_id") Long eventId,
-                                                          @PathVariable("purchase_id") Long purchaseId){
+                                                          @PathVariable("purchase_id") Long purchaseId) {
         String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(eventService.deletePurchaseFromEvent(eventId, purchaseId, principal)){
+        if (eventService.deletePurchaseFromEvent(eventId, purchaseId, principal)) {
             return ResponseEntity.ok(eventService.getEventById(eventId, principal));
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
 
-
+    @GetMapping("/split/{event_id}/")
+    public ResponseEntity<Object> split(@PathVariable Long event_id){
+        String principal = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        EntityModel<MyPartDTO> myPart = eventService.getMyPart(principal, event_id);
+        if(myPart != null){
+            return ResponseEntity.ok(myPart);
+        }
+        return ResponseEntity.badRequest().build();
+    }
 }
