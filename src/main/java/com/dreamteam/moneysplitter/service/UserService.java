@@ -60,13 +60,17 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setRoles(Sets.newHashSet(UserRoles.USER));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        UserStatistic userStatistic = new UserStatistic();
-        userStatistic.setTotalSpend(BigDecimal.ZERO);
-        userStatistic.setUpdatingDate(LocalDate.now().toString());
-        userStatistic.setUser(user);
-        statisticRepo.save(userStatistic);
-        return userRepo.save(user);
+        if(userRepo.findByEmail(user.getEmail()) == null) {
+            user.setRoles(Sets.newHashSet(UserRoles.USER));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            UserStatistic userStatistic = new UserStatistic();
+            userStatistic.setTotalSpend(BigDecimal.ZERO);
+            userStatistic.setUpdatingDate(LocalDate.now().toString());
+            userStatistic.setUser(user);
+            statisticRepo.save(userStatistic);
+            return userRepo.save(user);
+        } else {
+            return null;
+        }
     }
 }

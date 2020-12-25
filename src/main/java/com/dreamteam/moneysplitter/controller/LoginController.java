@@ -27,7 +27,12 @@ public class LoginController {
     }
 
     @PostMapping("/addUser")
-    public void addUser(@RequestBody User user) throws URISyntaxException {
-        userService.createUser(user);
+    public ResponseEntity<Object> addUser(@RequestBody User user) throws URISyntaxException {
+        User user1 = userService.createUser(user);
+        if(user1 == null){
+            return ResponseEntity.badRequest().body("User exist");
+        } else {
+            return ResponseEntity.ok().build();
+        }
     }
 }
