@@ -13,6 +13,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Collection;
 
@@ -35,16 +36,19 @@ public class StatisticService {
         this.userRepo = userRepo;
     }
 
+    @Transactional
     public EntityModel<StatisticDTO> getMonthStatistic(String principal) {
         return getStatisticEntityModel(userRepo.findByEmail(principal));
     }
 
+    @Transactional
     public void addToStatistic(String principal, BigDecimal cost) {
         UserStatistic byUser = userStatisticRepo.findByUser(userRepo.findByEmail(principal));
         byUser.setTotalSpend(byUser.getTotalSpend().add(cost));
         userStatisticRepo.save(byUser);
     }
 
+    @Transactional
     public EntityModel<StatisticDTO> getIntervalStatistic(String principal, String startDate, String endDate) {
         User user = userRepo.findByEmail(principal);
         Collection<Purchase> byDayInterval = purchaseRepo.findAllBetweenDates(startDate, endDate, user);

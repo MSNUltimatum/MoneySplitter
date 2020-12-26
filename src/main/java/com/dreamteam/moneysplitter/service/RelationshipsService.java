@@ -14,6 +14,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,13 @@ public class RelationshipsService {
         this.relationshipsResourceAssembler = relationshipsResourceAssembler;
     }
 
+    @Transactional
     public Set<EntityModel<UserDTO>> getUserFriends(String principal) {
         User user = userRepo.findByEmail(principal);
         return getEntityModels(user);
     }
 
+    @Transactional
     public Set<EntityModel<UserDTO>> getUserFriends(Long userId) {
         User user = userRepo.findById(userId).orElseThrow();
         return getEntityModels(user);
@@ -50,6 +53,7 @@ public class RelationshipsService {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional
     public void sendFriendshipRequest(String principal, Long friendId) {
         User sourceUser = userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
@@ -59,6 +63,7 @@ public class RelationshipsService {
         }
     }
 
+    @Transactional
     public void deleteFromFriend(String principal, Long friendId) {
         User sourceUser = userRepo.findByEmail(principal);
         User destinationUser = userRepo.findById(friendId).orElseThrow();
@@ -77,6 +82,7 @@ public class RelationshipsService {
         }
     }
 
+    @Transactional
     public Set<EntityModel<FriendshipRequestDTO>> getAllFriendshipRequests(String principal) {
         User user = userRepo.findByEmail(principal);
         Set<FriendshipRequest> allBySourceUser = friendshipsRequestRepo.findAllByDestinationUser(user);
@@ -91,11 +97,13 @@ public class RelationshipsService {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional
     public EntityModel<FriendshipRequest> getFriendshipRequest(Long requestId) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
         return resourceAssembler.toModel(friendshipRequest);
     }
 
+    @Transactional
     public void applyRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
         User user = userRepo.findByEmail(principal);
@@ -110,6 +118,7 @@ public class RelationshipsService {
         }
     }
 
+    @Transactional
     public void rejectRequest(Long requestId, String principal) {
         FriendshipRequest friendshipRequest = friendshipsRequestRepo.findById(requestId).orElseThrow();
         User user = userRepo.findByEmail(principal);

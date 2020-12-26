@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Links;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class PurchaseService {
         this.statisticService = statisticService;
     }
 
+    @Transactional
     public EntityModel<PurchaseDTO> addOwnUserPurchase(String principal, Purchase purchase) {
         purchase.setUser(userRepo.findByEmail(principal));
         purchase.setDate(LocalDate.now().toString());
@@ -44,6 +46,7 @@ public class PurchaseService {
         return EntityModel.of(DTOMaker.getPurchaseDTO(purchase), links);
     }
 
+    @Transactional
     public List<EntityModel<PurchaseDTO>> getAllUserPurchases(String principal) {
         List<Purchase> purchases = purchaseRepo.findAllByUser(userRepo.findByEmail(principal));
         return purchases.stream().map(e -> {
@@ -52,16 +55,11 @@ public class PurchaseService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public EntityModel<PurchaseDTO> getOnePurchase(Long purchase_id) {
         Purchase entity = purchaseRepo.findById(purchase_id).orElseThrow();
         Links links = resourceAssembler.toModel(entity).getLinks();
         return EntityModel.of(DTOMaker.getPurchaseDTO(entity), links);
     }
-
-//    private CollectionModel<EntityModel<Purchase>> getCollectionModel(List<EntityModel<Purchase>> purchase, Long user_id){
-//        return CollectionModel.of(purchase,
-//                linkTo(methodOn(UserProfileController.class).myProfile(user_id)).withRel("user"),
-//                linkTo(methodOn(PurchaseController.class).getAllUserPurchases(user_id)).withSelfRel());
-//    }
 
 }

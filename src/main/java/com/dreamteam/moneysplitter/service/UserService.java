@@ -14,6 +14,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -40,11 +41,13 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public EntityModel<UserDTO> getUserProfile(String principal) {
         User entity = userRepo.findByEmail(principal);
         return getUserEntityModel(entity);
     }
 
+    @Transactional
     public EntityModel<UserDTO> getUserProfile(Long userId) {
         User entity = userRepo.findById(userId).orElseThrow();
         return getUserEntityModel(entity);
@@ -59,6 +62,7 @@ public class UserService {
                 entity.getEmail()));
     }
 
+    @Transactional
     public User createUser(User user) {
         if(userRepo.findByEmail(user.getEmail()) == null) {
             user.setRoles(Sets.newHashSet(UserRoles.USER));

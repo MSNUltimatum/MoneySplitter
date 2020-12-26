@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -51,6 +52,7 @@ public class EventService {
         this.purchaseResourceAssembler = purchaseResourceAssembler;
     }
 
+    @Transactional
     public Map<String, Object> getEventById(Long eventId, String principal) {
         User user = userRepo.findByEmail(principal);
         Event event = eventRepo.findById(eventId).orElseThrow();
@@ -91,6 +93,7 @@ public class EventService {
         }).collect(Collectors.toSet());
     }
 
+    @Transactional
     public List<EntityModel<EventDTO>> getAllUserEvents(String principal) {
         return userEventRepo.findAllByUser(userRepo.findByEmail(principal))
                 .stream()
@@ -98,6 +101,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public EntityModel<EventDTO> createEvent(EventDTO eventDTO, String principal) {
         User user = userRepo.findByEmail(principal);
         Event event = new Event();
@@ -110,6 +114,7 @@ public class EventService {
         return eventResourceAssembler.toModel(DTOMaker.getEventDTO(save));
     }
 
+    @Transactional
     public Boolean addUserToEvent(Long eventId, Long userId, String principal) {
         User invitedUser = userRepo.findById(userId).orElseThrow();
         User inviter = userRepo.findByEmail(principal);
@@ -122,6 +127,7 @@ public class EventService {
         return false;
     }
 
+    @Transactional
     public boolean deleteUserFromEvent(Long eventId, Long userId, String principal) {
         User deletedUser = userRepo.findById(userId).orElseThrow();
         User owner = userRepo.findByEmail(principal);
@@ -145,6 +151,7 @@ public class EventService {
         userEventRepo.save(userEvent);
     }
 
+    @Transactional
     public boolean addPurchaseToEvent(Long eventId, PurchaseDTO purchaseDTO, String principal) {
         User user = userRepo.findByEmail(principal);
         Event event = eventRepo.findById(eventId).orElseThrow();
@@ -165,6 +172,7 @@ public class EventService {
         return userEventRepo.findAllByEvent(event).stream().anyMatch(e -> e.getUser().equals(user));
     }
 
+    @Transactional
     public boolean deletePurchaseFromEvent(Long eventId, Long purchaseId, String principal) {
         User user = userRepo.findByEmail(principal);
         Event event = eventRepo.findById(eventId).orElseThrow();
@@ -176,6 +184,7 @@ public class EventService {
         return false;
     }
 
+    @Transactional
     public EntityModel<MyPartDTO> getMyPart(String principal, Long eventId) {
         Event event = eventRepo.findById(eventId).orElse(null);
         User user = userRepo.findByEmail(principal);
@@ -192,6 +201,7 @@ public class EventService {
         return null;
     }
 
+    @Transactional
     public boolean closeEvent(String principal, Long eventId) {
         Event event = eventRepo.findById(eventId).orElse(null);
         User user = userRepo.findByEmail(principal);
